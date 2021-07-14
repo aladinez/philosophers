@@ -6,7 +6,7 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/12 18:44:52 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/07/13 21:25:17 by aez-zaou         ###   ########.fr       */
+/*   Updated: 2021/07/14 21:02:26 by aez-zaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,37 @@ int get_index(t_args *args)
     return (i);
 }
 
+void take_fork(t_args *args, int id)
+{
+    pthread_mutex_lock(&args->print);
+    printf("philo num %d has taken a fork\n", id + 1);
+    pthread_mutex_unlock(&args->print);
+}
+
+void thinking(t_args *args, int id)
+{
+    pthread_mutex_lock(&args->print);
+    printf("philo num %d is thinking\n", id + 1);
+    pthread_mutex_unlock(&args->print);
+}
+void sleeping(t_args *args, int id)
+{
+
+    pthread_mutex_lock(&args->print);
+    printf("philo num %d is sleeping\n", id + 1);
+    pthread_mutex_unlock(&args->print);
+    usleep(args->time_sleep * 1000);
+}
+
+void eating(t_args *args, int id)
+{
+
+    pthread_mutex_lock(&args->print);
+    printf("philo num %d  is eating...\n", id + 1);
+    pthread_mutex_unlock(&args->print);
+    usleep(args->time_eat * 1000);
+}
+
 void *routine(void *args2)
 {
     t_args *args;
@@ -30,37 +61,39 @@ void *routine(void *args2)
     
     args = (t_args *)args2;
     id = get_index(args);
-    pthread_mutex_lock(&args->forks[id]);
-    printf("philo num %d is alive\n", id);
+    
+    while (1)
+    {
+        pthread_mutex_lock(&args->forks[id]);
+        take_fork(args, id);
+        pthread_mutex_lock(&args->forks[(id + 1) % args->philo_num]);
+        take_fork(args, id);
+        
+        eating(args, id);
 
+        pthread_mutex_unlock(&args->forks[id]);
+        pthread_mutex_unlock(&args->forks[(id + 1) % args->philo_num]);
+        
+        sleeping(args, id);
+        
+        
 
-
-
-    pthread_mutex_unlock(&args->forks[id]);
+    }
     return (NULL);
 }
 
 int main()
 {
-    int number_of_philosophers = 10;
-    int i = 0;
-    int *philo_num;
-    void *ret_val;
+    int i;
     t_args args;
     
-    args.test = 0;
-    args.philo_num = 10;
-    args.index = (char *)malloc(number_of_philosophers * sizeof(char));
+    args.philo_num = 6;
+    args.time_eat = 100;
+    args.time_die = 400;
+    args.time_sleep = 200;
+    args.index = (char *)malloc(args.philo_num * sizeof(char));
+    memset(args.index, 'a', args.philo_num);
     init_forks(&args);
-    while (i < number_of_philosophers)
-    {
-        args.index[i] = 'a';
-        i++;
-    }
-    // int time_to_die;
-    // int time_to_eat;
-    // int time_to_sleep;
-    i = 0;
 
     create_thread(&args);
    
@@ -74,29 +107,54 @@ void    init_forks(t_args *args)
     int i;
 
     i = 0;
+    pthread_mutex_init(&args->print , NULL);
     args->forks = (pthread_mutex_t *)malloc(args->philo_num * sizeof(pthread_mutex_t));
     while (i < args->philo_num)
     {
         pthread_mutex_init(&args->forks[i] , NULL);
-
+        i++;
     }
 }
 
 void create_thread(t_args *args)
 {
+    int i;
+
     args->philos = (pthread_t *)malloc(args->philo_num * sizeof(pthread_t));
+    i = 1;
     while (i < 10)
     {
-        args.index[i] = 'f';
+        args->index[i] = 'f';
         if (pthread_create(args->philos + i, NULL, &routine, (void*)args) != 0)
-			return (1);
-        i++;
+		{
+            printf("Error occured while creating a thread\n");
+			exit(1);
+        }
+        i += 2;
+    }
+    sleep(1);
+    i = 0;
+    while (i < 10)
+    {
+        args->index[i] = 'f';
+        if (pthread_create(args->philos + i, NULL, &routine, (void*)args) != 0)
+        {
+            printf("Error occured while creating a thread\n");
+			exit(1);
+        }
+        i += 2;
+    }
+    i = 1;
+    while (i < 10)
+    {
+        pthread_join(args->philos[i], NULL);
+        i += 2;
+
     }
     i = 0;
     while (i < 10)
     {
         pthread_join(args->philos[i], NULL);
-		i++;
+        i += 2;
     }
-    printf("test = %d\n", args.test);
 }
