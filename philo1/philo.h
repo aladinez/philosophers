@@ -6,7 +6,7 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/24 10:04:49 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/09/26 13:25:57 by aez-zaou         ###   ########.fr       */
+/*   Updated: 2021/09/26 16:20:32 by aez-zaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,24 @@ typedef struct s_data{
 }t_data;
 
 typedef struct s_philos{
-    int last_time_eat;
+    unsigned long last_eat;
     int num_of_eats;
     int index;
+    pthread_t thread;
     t_data *data;
 }t_philos;
 
 long	ft_atoi(const char *str);
 int	count_num(char str, long *num, long max, long sign);
+int	is_digit(char *str);
+int parsing(t_data *data, int argc, char **argv);
+unsigned long	get_time();
+t_philos	*create_philos(t_data *data);
+void	init_forks(t_data *data);
+void take_fork(t_philos *philo, int index);
+void eating(t_philos *philo, int index);
+void	*routine(void *philo1);
+
 
 
 #endif
