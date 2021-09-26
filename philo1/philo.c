@@ -6,7 +6,7 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/24 10:04:12 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/09/26 18:28:40 by aez-zaou         ###   ########.fr       */
+/*   Updated: 2021/09/26 18:36:02 by aez-zaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,13 +115,15 @@ void eating(t_philos *philo, int index)
 {
 	philo->last_eat = get_time();
 	pthread_mutex_lock(&philo->data->print);
-	printf("%lu philo num %d is eating\n", philo->last_eat - philo->data->starting_time, index + 1);
+	printf("%lu philo num %d is eating ===> %d times\n", philo->last_eat - philo->data->starting_time, index + 1, philo->num_of_eats);
 	pthread_mutex_unlock(&philo->data->print);
 	
 	usleep(philo->data->time_eat * 1000);
 
 	pthread_mutex_unlock(&philo->data->forks[index]);
 	pthread_mutex_unlock(&philo->data->forks[(index + 1) % philo->data->philo_num]);
+
+	philo->num_of_eats++;
 	
 }
 
@@ -161,10 +163,8 @@ void	*routine(void *philo1)
 
 void	create_threads(t_philos *philos, t_data data)
 {
-	// pthread_t *threads;
 	int	i;
 
-	// threads = (pthread_t *)malloc(data.philo_num * sizeof(pthread_t));
 	i = 0;
 	while (i < data.philo_num)
 	{
@@ -191,12 +191,6 @@ int main(int argc, char **argv)
 	data.starting_time = get_time();
 	create_threads(philos, data);
 	
-	// int i = 0;
-	// while (i < data.philo_num)
-	// {
-	// 	printf("philo id : %d\n", philos[i].index);
-	// 	i += 2;
-	// }
 	while (1)
 		;	
 }
