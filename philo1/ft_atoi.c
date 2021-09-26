@@ -6,11 +6,11 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/24 10:54:16 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/09/24 11:23:10 by aez-zaou         ###   ########.fr       */
+/*   Updated: 2021/09/26 08:20:35 by aez-zaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo."
+#include "philo.h"
 
 long	ft_atoi(const char *str)
 {
