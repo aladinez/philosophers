@@ -6,7 +6,7 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/24 10:04:12 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/09/27 16:18:07 by aez-zaou         ###   ########.fr       */
+/*   Updated: 2021/09/27 16:44:34 by aez-zaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,11 +78,13 @@ t_philos	*create_philos(t_data *data)
 
 	i = 0;
 	pthread_mutex_init(&data->print , NULL);
+	
 	data->forks = (pthread_mutex_t *)malloc(data->philo_num * sizeof(pthread_mutex_t));
 	philos = (t_philos *)malloc(data->philo_num * sizeof(t_philos));
 	while (i < data->philo_num)
 	{
 		philos[i].num_of_eats = 0;
+		pthread_mutex_init(&philos[i].eat_check , NULL);
 		pthread_mutex_init(&data->forks[i] , NULL);
 		i++;
 	}
@@ -97,8 +99,8 @@ void take_fork(t_philos *philo, int index)
 	pthread_mutex_lock(&philo->data->forks[index]);
 	
 	pthread_mutex_lock(&philo->data->print);
-	printf("%lu philo num %d has taken a fork %d\n", get_time() - philo->data->starting_time, index, right);
-	printf("%lu philo num %d has taken a fork %d\n", get_time() - philo->data->starting_time, index, index);
+	printf("%lu %d has taken a fork\n", get_time(), index);
+	printf("%lu %d has taken a fork\n", get_time(), index);
 	pthread_mutex_unlock(&philo->data->print);
 
 	pthread_mutex_lock(&philo->eat_check);
@@ -114,7 +116,7 @@ void eating(t_philos *philo, int index)
 	philo->last_eat = get_time();
 	philo->num_of_eats++;
 	pthread_mutex_lock(&philo->data->print);
-	printf("%lu philo num %d is eating ===> %d times\n", philo->last_eat - philo->data->starting_time, index, philo->num_of_eats);
+	printf("%lu %d is eating\n", philo->last_eat, index);
 	pthread_mutex_unlock(&philo->data->print);
 	usleep((philo->data->time_eat - 10) * 1000);
 	while (philo->last_eat + philo->data->time_eat - get_time())
@@ -127,7 +129,7 @@ void	sleeping(t_philos *philo, int index)
 
 	before_sleep = get_time() * 1000;
 	pthread_mutex_lock(&philo->data->print);
-	printf("%lu philo num %d is sleeping\n", get_time() - philo->data->starting_time, index);
+	printf("%lu %d is sleeping\n", get_time(), index);
 	pthread_mutex_unlock(&philo->data->print);
 	usleep((philo->data->time_sleep - 10) * 1000);
 	while (before_sleep  + philo->data->time_sleep * 1000 - get_time() * 1000)
@@ -137,7 +139,7 @@ void	sleeping(t_philos *philo, int index)
 void thinking(t_philos *philo, int index)
 {
 	pthread_mutex_lock(&philo->data->print);
-	printf("%lu philo num %d is thinking\n", get_time() - philo->data->starting_time, index);
+	printf("%lu %d is thinking\n", get_time(), index);
 	pthread_mutex_unlock(&philo->data->print);
 }
 
@@ -208,9 +210,8 @@ void	supervisor(t_philos *philos, t_data *data)
 			if ((philos[i].last_eat + (unsigned long)data->time_die) < get_time())
 			{
 				pthread_mutex_lock(&data->print);
-				printf("%lu philo num %d is dead\n", get_time() - data->starting_time, philos[i].index);
+				printf("%lu %d died\n", get_time(), philos[i].index);
 				return ;
-				// pthread_mutex_unlock(&philo->data->print);
 			}
 			pthread_mutex_unlock(&philos[i].eat_check);
 			i++;
@@ -218,7 +219,7 @@ void	supervisor(t_philos *philos, t_data *data)
 		if (data->eating_times > 0 ) 
 			if (check_eat_times(philos, data) == 1)
 				exit(1);
-		// usleep(2000);
+		usleep(1000);
 	}
 }
 
@@ -233,7 +234,6 @@ int main(int argc, char **argv)
 	philos = create_philos(data);
 	create_threads(philos, data);
 	supervisor(philos, data);
-	// TODO: free
 	free(data->forks);
 	free(data);
 	free(philos);
