@@ -6,7 +6,7 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/24 10:04:49 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/09/27 10:11:02 by aez-zaou         ###   ########.fr       */
+/*   Updated: 2021/09/27 15:18:58 by aez-zaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ typedef struct s_data{
     int time_die;
     int time_sleep;
     int eating_times;
+    int num_of_eats;
+
     
 }t_data;
 
@@ -39,6 +41,7 @@ typedef struct s_philos{
     int num_of_eats;
     int index;
     pthread_t thread;
+    pthread_mutex_t eat_check;
     t_data *data;
 }t_philos;
 
@@ -48,10 +51,11 @@ int	is_digit(char *str);
 int parsing(t_data *data, int argc, char **argv);
 unsigned long	get_time();
 t_philos	*create_philos(t_data *data);
-void	init_forks(t_data *data);
 void take_fork(t_philos *philo, int index);
 void eating(t_philos *philo, int index);
 void	*routine(void *philo1);
+void	every_other_thread(t_philos *philos, t_data *data, int i);
+
 
 
 
