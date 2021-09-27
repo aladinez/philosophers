@@ -6,7 +6,7 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/24 10:04:49 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/09/27 15:18:58 by aez-zaou         ###   ########.fr       */
+/*   Updated: 2021/09/27 17:08:06 by aez-zaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ typedef struct s_data{
     pthread_mutex_t print;
     pthread_mutex_t *forks;
 
-    unsigned long starting_time;
     int philo_num;
     int time_eat;
     int time_die;
