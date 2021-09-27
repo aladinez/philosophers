@@ -6,7 +6,7 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/27 17:23:53 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/09/27 17:31:30 by aez-zaou         ###   ########.fr       */
+/*   Updated: 2021/09/27 18:49:32 by aez-zaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	eating(t_philos *philo, int index)
 	printf("%lu %d is eating\n", philo->last_eat, index + 1);
 	pthread_mutex_unlock(&philo->data->print);
 	usleep((philo->data->time_eat - 10) * 1000);
-	while (philo->last_eat + philo->data->time_eat - get_time())
+	while (get_time() - philo->last_eat < (unsigned long)philo->data->time_eat)
 		;
 }
 
@@ -61,7 +61,7 @@ void	sleeping(t_philos *philo, int index)
 	printf("%lu %d is sleeping\n", get_time(), index + 1);
 	pthread_mutex_unlock(&philo->data->print);
 	usleep((philo->data->time_sleep - 10) * 1000);
-	while (before_sleep + philo->data->time_sleep * 1000 - get_time() * 1000)
+	while (get_time() - before_sleep < (unsigned long)philo->data->time_sleep)
 		;
 }
 

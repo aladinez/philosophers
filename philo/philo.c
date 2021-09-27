@@ -6,7 +6,7 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/24 10:04:12 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/09/27 17:50:21 by aez-zaou         ###   ########.fr       */
+/*   Updated: 2021/09/27 19:05:24 by aez-zaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,8 @@ void	supervisor(t_philos *philos, t_data *data)
 			pthread_mutex_unlock(&philos[i].eat_check);
 			i++;
 		}
-		if (data->eating_times > 0)
-			if (check_eat_times(philos, data) == 1)
-				exit(1);
+		if (data->eating_times > 0 && check_eat_times(philos, data))
+			exit(1);
 		usleep(1000);
 	}
 }
