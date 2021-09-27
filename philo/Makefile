@@ -6,15 +6,17 @@
 #    By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/24 10:07:26 by aez-zaou          #+#    #+#              #
-#    Updated: 2021/09/27 14:40:36 by aez-zaou         ###   ########.fr        #
+#    Updated: 2021/09/27 17:52:18 by aez-zaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= philo
 
-GCC			= gcc -Wall -Wextra -Werror -pthread -fsanitize=address -g
+GCC			= gcc -Wall -Wextra -Werror -pthread -fsanitize=address
 SRCS		= philo.c	\
-			ft_atoi.c	\
+			utils.c		\
+			events.c	\
+			threads.c	\
 
 all : $(NAME)
 
